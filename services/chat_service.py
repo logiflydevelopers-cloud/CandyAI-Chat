@@ -10,7 +10,7 @@ characters_collection = db["characters"]
 sessions_collection = db["chat_sessions"]
 conversations_collection = db["conversations"]
 messages_collection = db["messages"]
-tokens_collection = db["tokens"]
+tokens_collection = db["chat_tokens"]
 
 
 def process_chat(user_id, character_id, user_message):
