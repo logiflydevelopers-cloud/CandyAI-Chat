@@ -31,7 +31,7 @@ class Settings:
     # FAL CONFIG
     # =====================================================
 
-    # FAL_KEY: str = os.getenv("FAL_KEY", "")
+    FAL_KEY: str = os.getenv("FAL_KEY", "")
 
     # =====================================================
     # OPENAI CONFIG
@@ -43,7 +43,7 @@ class Settings:
     # REPLICATE CONFIG
     # =====================================================
 
-#     REPLICATE_API_TOKEN: str = os.getenv("REPLICATE_API_TOKEN", "")
+    REPLICATE_API_TOKEN: str = os.getenv("REPLICATE_API_TOKEN", "")
 
 #     # =====================================================
 #     # REQUEST LIMITS
