@@ -12,12 +12,19 @@ from models.model_registry import get_model
 # CHARACTER PIPELINE
 # =========================================================
 
-async def generate_character_pipeline(user_data: dict, style: str):
-
+async def generate_character_pipeline(
+    user_data: dict,
+    style: str,
+    role: str = "user"
+):
     """
-    Full character generation pipeline
+    Character generation pipeline
 
-    Outputs:
+    USER:
+    - base image
+    - 1 edited image
+
+    ADMIN:
     - base image
     - 2 edited images
     - 2 videos
@@ -30,21 +37,17 @@ async def generate_character_pipeline(user_data: dict, style: str):
     base_prompt = build_base_prompt(user_data)
 
     # -----------------------------------------------------
-    # GENERATE PIPELINE PROMPTS USING GPT
+    # GENERATE PROMPTS (ROLE-BASED)
     # -----------------------------------------------------
 
-    prompts = generate_pipeline_prompts(base_prompt)
+    prompts = generate_pipeline_prompts(base_prompt, role)
 
-    base_image_prompt = prompts["base_image_prompt"]
-    edit_prompt_1 = prompts["edit_prompt_1"]
-    edit_prompt_2 = prompts["edit_prompt_2"]
-    video_prompt_1 = prompts["video_prompt_1"]
-    video_prompt_2 = prompts["video_prompt_2"]
-    # print(base_image_prompt)
-    # print(edit_prompt_1)
-    # print(edit_prompt_2)
-    # print(video_prompt_1)
-    # print(video_prompt_2)
+    base_image_prompt = prompts.get("base_image_prompt")
+    edit_prompt_1 = prompts.get("edit_prompt_1")
+    edit_prompt_2 = prompts.get("edit_prompt_2")
+
+    video_prompt_1 = prompts.get("video_prompt_1")
+    video_prompt_2 = prompts.get("video_prompt_2")
 
     # -----------------------------------------------------
     # SELECT MODEL BASED ON STYLE
@@ -60,7 +63,7 @@ async def generate_character_pipeline(user_data: dict, style: str):
         video_model = "character_video"
 
     # -----------------------------------------------------
-    # GET HANDLERS FROM REGISTRY
+    # GET HANDLERS
     # -----------------------------------------------------
 
     image_handler = get_model("image_generation", base_model)
@@ -77,45 +80,44 @@ async def generate_character_pipeline(user_data: dict, style: str):
     )
 
     # -----------------------------------------------------
-    # GENERATE EDITED IMAGES
+    # USER FLOW (LIGHTWEIGHT)
     # -----------------------------------------------------
 
-    edit_tasks = [
-        asyncio.to_thread(
+    if role == "user":
+
+        edited_image = await asyncio.to_thread(
             edit_handler,
             base_image,
             edit_prompt_1
-        ),
-        asyncio.to_thread(
-            edit_handler,
-            base_image,
-            edit_prompt_2
         )
+
+        return {
+            "base_image": base_image,
+            "edited_images": [edited_image]
+        }
+
+    # -----------------------------------------------------
+    # ADMIN FLOW (FULL PIPELINE)
+    # -----------------------------------------------------
+
+    # ---- EDITS ----
+    edit_tasks = [
+        asyncio.to_thread(edit_handler, base_image, edit_prompt_1),
+        asyncio.to_thread(edit_handler, base_image, edit_prompt_2)
     ]
 
     edited_images = await asyncio.gather(*edit_tasks)
 
-    # -----------------------------------------------------
-    # GENERATE VIDEOS
-    # -----------------------------------------------------
-
+    # ---- VIDEOS ----
     video_tasks = [
-        asyncio.to_thread(
-            video_handler,
-            edited_images[0],
-            video_prompt_1
-        ),
-        asyncio.to_thread(
-            video_handler,
-            edited_images[1],
-            video_prompt_2
-        )
+        asyncio.to_thread(video_handler, edited_images[0], video_prompt_1),
+        asyncio.to_thread(video_handler, edited_images[1], video_prompt_2)
     ]
 
     videos = await asyncio.gather(*video_tasks)
 
     # -----------------------------------------------------
-    # RETURN FINAL OUTPUT
+    # RETURN
     # -----------------------------------------------------
 
     return {

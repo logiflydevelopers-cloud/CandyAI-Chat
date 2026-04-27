@@ -21,7 +21,7 @@ def process_chat(user_id, character_id, user_message):
     character_object_id = ObjectId(character_id)
 
     # =========================
-    # 1️⃣ Find or Create Session
+    # Find or Create Session
     # =========================
 
     session = sessions_collection.find_one({
@@ -45,7 +45,7 @@ def process_chat(user_id, character_id, user_message):
         session_id = session["_id"]
 
     # =========================
-    # 2️⃣ Find Conversation
+    # Find Conversation
     # =========================
 
     conversation = conversations_collection.find_one({
@@ -58,7 +58,7 @@ def process_chat(user_id, character_id, user_message):
         conversation_id = None
 
     # =========================
-    # 3️⃣ Fetch Last Messages
+    # Fetch Last Messages
     # =========================
 
     history = []
@@ -85,7 +85,7 @@ def process_chat(user_id, character_id, user_message):
             ]
 
     # =========================
-    # 4️⃣ Fetch Character
+    # Fetch Character
     # =========================
 
     character = characters_collection.find_one({
@@ -96,19 +96,19 @@ def process_chat(user_id, character_id, user_message):
         raise ValueError(f"Character not found: {character_id}")
 
     # =========================
-    # 5️⃣ Build System Prompt
+    # Build System Prompt
     # =========================
 
     system_prompt = build_character_prompt(character)
 
     # =========================
-    # 6️⃣ Call LLM
+    # Call LLM
     # =========================
 
     ai_reply, usage = chat(system_prompt, history, user_message)
 
     # =========================
-    # 7️⃣ Store Token Usage
+    # Store Token Usage
     # =========================
 
     if message_doc_id:
@@ -132,7 +132,7 @@ def process_chat(user_id, character_id, user_message):
         )
 
     # =========================
-    # 8️⃣ Update Session Timestamp
+    # Update Session Timestamp
     # =========================
 
     sessions_collection.update_one(

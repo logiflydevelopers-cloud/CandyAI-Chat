@@ -13,9 +13,13 @@ async def generate_character(request: CharacterRequest):
 
     user_data = request.model_dump()
 
+    # ✅ role comes directly from payload
+    role = request.role or "user"
+
     result = await generate_character_pipeline(
         user_data=user_data,
-        style=request.style
+        style=request.style,
+        role=role   # ✅ pass role
     )
 
     return result

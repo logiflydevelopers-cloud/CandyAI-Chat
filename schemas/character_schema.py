@@ -1,16 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class CharacterRequest(BaseModel):
-    style: str
-    ethnicity: str
-    age: int
+    style: str = Field(..., example="realistic, cinematic")
+    ethnicity: str = Field(..., example="Indian")
+    age: int = Field(..., ge=18, le=60)
+
     hair_color: str
     hair_style: str
     eye_color: str
+
     body_type: str
-    b_size: str
+    b_size: Optional[str] = None   # ✅ optional (safer)
+
     personality: str
     relationship: str
     occupation: str
-    kinks: str
+
+    kinks: Optional[str] = None   # ✅ optional (important)
+
+    # 🔥 NEW (OPTIONAL BUT USEFUL)
+    role: Optional[str]
