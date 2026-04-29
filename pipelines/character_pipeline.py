@@ -7,7 +7,6 @@ from services.prompt_builder import (
 
 from models.model_registry import get_model
 
-
 # =========================================================
 # CHARACTER PIPELINE
 # =========================================================
@@ -125,3 +124,4 @@ async def generate_character_pipeline(
         "edited_images": edited_images,
         "videos": videos
     }
+

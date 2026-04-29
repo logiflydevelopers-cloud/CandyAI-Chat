@@ -27,7 +27,7 @@ def edit_character(image_url: list[str], prompt: str):
             "width": 832,
             "height": 1232
         }
-        }
+    }
     
     try:
         result = fal.run(

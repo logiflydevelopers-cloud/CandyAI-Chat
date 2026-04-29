@@ -12,13 +12,12 @@ class CharacterRequest(BaseModel):
     eye_color: str
 
     body_type: str
-    b_size: Optional[str] = None   # ✅ optional (safer)
+    b_size: Optional[str] = None
 
     personality: str
     relationship: str
     occupation: str
 
-    kinks: Optional[str] = None   # ✅ optional (important)
+    kinks: Optional[str] = None
 
-    # 🔥 NEW (OPTIONAL BUT USEFUL)
     role: Optional[str]

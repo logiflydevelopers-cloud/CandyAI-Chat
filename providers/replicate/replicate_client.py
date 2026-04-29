@@ -1,7 +1,6 @@
 import replicate
 from core.config import settings
 
-
 class ReplicateClient:
     """
     Central wrapper for Replicate API calls

@@ -36,3 +36,5 @@ def generate_character_video(image_url: str, prompt: str):
 
     except Exception as e:
         raise RuntimeError(f"Seedance Model failed: {e}")
+    
+    
