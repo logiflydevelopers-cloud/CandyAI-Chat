@@ -4,6 +4,7 @@ from bson import ObjectId
 from database.mongo import db
 from services.prompt_builder import build_character_prompt
 from services.llm_service import chat
+from services.posthog_client import capture_event
 
 characters_collection = db["characters"]
 sessions_collection = db["chat_sessions"]
@@ -18,7 +19,7 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
 
     character_object_id = ObjectId(character_id)
     message_doc_object_id = ObjectId(message_doc_id)  
-    
+
     # =========================
     # Find or Create Session
     # =========================
@@ -94,7 +95,36 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
     # Call LLM
     # =========================
 
-    ai_reply, usage = chat(system_prompt, history, user_message)
+    try:
+        ai_reply, usage = chat(system_prompt, history, user_message)
+
+        capture_event(
+            user_id=user_id,
+            event="gpt_usage",
+            properties={
+                "message_id": str(message_doc_object_id),
+                "character_id": str(character_object_id),
+
+                "prompt_tokens": usage["prompt_tokens"],
+                "completion_tokens": usage["completion_tokens"],
+                "total_tokens": usage["total_tokens"],
+
+                "model": "gpt-4.1-mini",
+                "feature": "chat",
+                "status": "success"
+            }
+        )
+
+    except Exception as e:
+        capture_event(
+            user_id=user_id,
+            event="gpt_error",
+            properties={
+                "error": str(e),
+                "feature": "chat"
+            }
+        )
+        raise
 
     # =========================
     # Store Token Usage (FIXED)
