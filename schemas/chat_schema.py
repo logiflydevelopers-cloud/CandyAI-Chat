@@ -5,3 +5,4 @@ class ChatRequest(BaseModel):
     userId: str
     characterId: str
     question: str
+    messageDocId: str

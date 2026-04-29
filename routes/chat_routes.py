@@ -11,7 +11,8 @@ def chat_with_character(request: ChatRequest):
     reply = process_chat(
         user_id=request.userId,
         character_id=request.characterId,
-        user_message=request.question
+        user_message=request.question,
+        message_doc_id=request.messageDocId
     )
 
     return {
