@@ -8,10 +8,19 @@ posthog = Posthog(
 
 def capture_event(user_id, event, properties=None):
     try:
+        user_id = str(user_id)
+
         posthog.capture(
-            distinct_id=str(user_id),
+            distinct_id=user_id,
             event=event,
-            properties=properties or {}
+            properties={
+                **(properties or {}),
+                
+                "$set": {
+                    "user_id": user_id
+                }
+            }
         )
+
     except Exception as e:
         print("PostHog Error:", e)
