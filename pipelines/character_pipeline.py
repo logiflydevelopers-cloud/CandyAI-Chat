@@ -35,6 +35,7 @@ async def generate_character_pipeline(
 
     base_prompt = build_base_prompt(user_data)
 
+
     # -----------------------------------------------------
     # GENERATE PROMPTS (ROLE-BASED)
     # -----------------------------------------------------
@@ -47,6 +48,11 @@ async def generate_character_pipeline(
 
     video_prompt_1 = prompts.get("video_prompt_1")
     video_prompt_2 = prompts.get("video_prompt_2")
+    print(base_image_prompt)
+    print(edit_prompt_1)
+    print(edit_prompt_2)
+    print(video_prompt_1)
+    print(video_prompt_2)
 
     # -----------------------------------------------------
     # SELECT MODEL BASED ON STYLE
