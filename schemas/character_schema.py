@@ -12,7 +12,7 @@ class CharacterRequest(BaseModel):
     eye_color: str
 
     body_type: str
-    b_size: Optional[str] = None
+    b_size: Optional[str]
     gender: Optional[str]
     hobbies: Optional[str]
     clothing: Optional[str]
@@ -20,6 +20,6 @@ class CharacterRequest(BaseModel):
     relationship: str
     occupation: str
 
-    kinks: Optional[str] = None
+    kinks: Optional[str]
 
     role: Optional[str]
