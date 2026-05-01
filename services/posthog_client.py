@@ -6,7 +6,7 @@ posthog = Posthog(
     host=os.getenv("POSTHOG_HOST")
 )
 
-print("POSTHOG KEY:", os.getenv("POSTHOG_API_KEY"))
+# print("POSTHOG KEY:", os.getenv("POSTHOG_API_KEY"))
 
 def capture_event(user_id, event, properties=None):
     try:

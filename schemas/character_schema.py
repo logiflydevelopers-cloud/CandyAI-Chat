@@ -13,7 +13,9 @@ class CharacterRequest(BaseModel):
 
     body_type: str
     b_size: Optional[str] = None
-
+    gender: Optional[str]
+    hobbies: Optional[str]
+    clothing: Optional[str]
     personality: str
     relationship: str
     occupation: str
@@ -21,4 +23,3 @@ class CharacterRequest(BaseModel):
     kinks: Optional[str] = None
 
     role: Optional[str]
-    gender: Optional[str]
