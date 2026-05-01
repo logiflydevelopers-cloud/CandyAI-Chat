@@ -6,6 +6,8 @@ posthog = Posthog(
     host=os.getenv("POSTHOG_HOST")
 )
 
+print("POSTHOG KEY:", os.getenv("POSTHOG_API_KEY"))
+
 def capture_event(user_id, event, properties=None):
     try:
         user_id = str(user_id)
@@ -22,5 +24,7 @@ def capture_event(user_id, event, properties=None):
             }
         )
 
+        posthog.flush()
+
     except Exception as e:
-        print("PostHog Error:", e)
+        print("PostHog Error:", e)     

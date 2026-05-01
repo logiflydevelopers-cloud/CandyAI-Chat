@@ -69,7 +69,8 @@ def build_base_prompt(data: dict) -> str:
     """
 
     prompt = f"""
-        {data.get('style','')} {data.get('ethnicity','')} woman,
+        {data.get('style','')} {data.get('ethnicity','')}, 
+        gender: {data.get('gender','')}
         age {data.get('age','')},
         {data.get('hair_color','')} {data.get('hair_style','')} hair,
         {data.get('eye_color','')} eyes,
