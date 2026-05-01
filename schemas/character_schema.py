@@ -21,3 +21,4 @@ class CharacterRequest(BaseModel):
     kinks: Optional[str] = None
 
     role: Optional[str]
+    gender: Optional[str]
