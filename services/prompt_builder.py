@@ -79,7 +79,8 @@ def build_base_prompt(data: dict) -> str:
         personality: {data.get('personality','')},
         relationship: {data.get('relationship','')},
         occupation: {data.get('occupation','')},
-        kinks: {data.get('kinks','')}
+        kinks: {data.get('kinks','')},
+        nudity: {data.get('nudity','')}
         """
 
     return " ".join(prompt.split())
@@ -94,6 +95,8 @@ def build_system_prompt(role: str) -> str:
         IMPORTANT:
         - Maintain SAME character identity across all prompts.
         - Each prompt must be visually rich, cinematic, and detailed.
+        - If nudity is false then all prompts should maintain decency.
+        - If nudity is true then decide the outfits and scenes to be more explicit.
     """
 
     if role == "admin":
