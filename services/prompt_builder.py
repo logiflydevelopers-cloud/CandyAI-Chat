@@ -96,7 +96,8 @@ def build_system_prompt(role: str) -> str:
         - Maintain SAME character identity across all prompts.
         - Each prompt must be visually rich, cinematic, and detailed.
         - If nudity is false then all prompts should maintain decency.
-        - If nudity is true then decide the outfits and scenes to be more explicit.
+        - If nudity is true then decide the outfits and scenes to be more explicit based on nudity concept.
+        - If gender is transgender then show some element regarding to it like dick.
     """
 
     if role == "admin":
