@@ -1,5 +1,8 @@
 from celery import Celery
 import os
+import sys
+
+sys.path.append(os.getcwd())
 
 REDIS_URL = os.getenv("REDIS_URL")
 
