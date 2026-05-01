@@ -1,8 +1,8 @@
-from core.celery_app import celery_app
+from celery import shared_task
 from pipelines.character_pipeline import generate_character_pipeline
 from services.character_service import generate_pose_image
 
-@celery_app.task(bind=True)
+@shared_task(bind=True)
 def generate_character_task(self, user_data, style, role):
     try:
         result = generate_character_pipeline(
@@ -14,7 +14,7 @@ def generate_character_task(self, user_data, style, role):
     except Exception as e:
         return {"error": str(e)}
 
-@celery_app.task(bind=True)
+@shared_task(bind=True)
 def generate_pose_task(self, character_id, pose, variation_index):
     try:
         result = generate_pose_image(
