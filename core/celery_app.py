@@ -20,4 +20,8 @@ celery_app.conf.update(
     enable_utc=True,
 )
 
+# autodiscover
 celery_app.autodiscover_tasks(["tasks"])
+
+import tasks.character_tasks
+import tasks.video_tasks
