@@ -38,7 +38,6 @@ def build_character_prompt(character):
         Language:
         {language}
 
-
         Stay in character at all times. Never say you are an AI.
 
         Style:
@@ -80,7 +79,7 @@ def build_base_prompt(data: dict) -> str:
         relationship: {data.get('relationship','')},
         occupation: {data.get('occupation','')},
         kinks: {data.get('kinks','')},
-        nudity: {data.get('nudity','')}
+        adult_content: {data.get('adult_content','')}
         """
 
     return " ".join(prompt.split())
@@ -95,8 +94,8 @@ def build_system_prompt(role: str) -> str:
         IMPORTANT:
         - Maintain SAME character identity across all prompts.
         - Each prompt must be visually rich, cinematic, and detailed.
-        - If nudity is false then all prompts should maintain decency.
-        - If nudity is true then decide the outfits and scenes to be more explicit based on nudity concept.
+        - If adult_content is false then all prompts should maintain decency.
+        - If adult_content is true then decide the outfits and scenes to be more explicit based on adult_content concept.
         - If gender is transgender then show some element regarding to it like dick.
     """
 
@@ -279,3 +278,4 @@ def build_video_prompt(motion_instruction: str) -> str:
         Outfit and background can adapt naturally to the scene.
         High detail, cinematic lighting, smooth animation.
     """
+
