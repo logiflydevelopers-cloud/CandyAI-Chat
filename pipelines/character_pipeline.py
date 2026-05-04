@@ -141,3 +141,4 @@ async def generate_character_pipeline(
         "edited_images": [str(img) for img in edited_images],
         "videos": [str(v) for v in videos]
     }
+

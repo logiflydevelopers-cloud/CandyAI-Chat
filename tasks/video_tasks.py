@@ -11,8 +11,13 @@ def generate_video_task(self, character_id, motion, motion_index):
         if not character:
             return {"error": "Character not found"}
 
+        base_image = character.get("images", [None])[0]
+
+        if not base_image:
+            return {"error": "No base image found"}
+
         result = generate_video_pipeline(
-            image_url=character.base_image_url,
+            image_url=base_image,
             motion=motion,
             motion_index=motion_index
         )
