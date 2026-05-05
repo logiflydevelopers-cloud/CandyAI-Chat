@@ -4,7 +4,8 @@ import inspect
 from services.prompt_builder import (
     build_base_prompt,
     generate_pipeline_prompts,
-    generate_welcome_message
+    generate_welcome_message,
+    generate_character_description
 )
 
 from models.model_registry import get_model
@@ -82,7 +83,18 @@ async def generate_character_pipeline(
     video_handler = get_model("image_to_video", video_model)
 
     # -----------------------------------------------------
-    # PARALLEL TASKS (IMAGE + MESSAGE)
+    # SAFE DATA FOR TEXT GENERATION (IMPORTANT)
+    # -----------------------------------------------------
+
+    safe_data = {
+        "personality": user_data.get("personality"),
+        "relationship": user_data.get("relationship"),
+        "occupation": user_data.get("occupation"),
+        "name": user_data.get("name", "")
+    }
+
+    # -----------------------------------------------------
+    # PARALLEL TASKS (IMAGE + TEXT)
     # -----------------------------------------------------
 
     base_image_task = run_handler(
@@ -92,13 +104,19 @@ async def generate_character_pipeline(
 
     welcome_message_task = asyncio.to_thread(
         generate_welcome_message,
-        user_data
+        safe_data
     )
 
-    # Run both together
-    base_image, welcome_message = await asyncio.gather(
+    description_task = asyncio.to_thread(
+        generate_character_description,
+        safe_data
+    )
+
+    # Run all together
+    base_image, welcome_message, description = await asyncio.gather(
         base_image_task,
-        welcome_message_task
+        welcome_message_task,
+        description_task
     )
 
     # -----------------------------------------------------
@@ -116,7 +134,8 @@ async def generate_character_pipeline(
         return {
             "base_image": str(base_image),
             "edited_images": [str(edited_image)],
-            "welcome_message": welcome_message
+            "welcome_message": welcome_message,
+            "description": description
         }
 
     # -----------------------------------------------------
@@ -147,5 +166,6 @@ async def generate_character_pipeline(
         "base_image": str(base_image),
         "edited_images": [str(img) for img in edited_images],
         "videos": [str(v) for v in videos],
-        "welcome_message": welcome_message
+        "welcome_message": welcome_message,
+        "description": description
     }

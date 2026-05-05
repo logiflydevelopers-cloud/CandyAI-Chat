@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from celery import shared_task
 from pipelines.character_pipeline import generate_character_pipeline
 from services.character_service import generate_pose_image
@@ -31,28 +32,30 @@ def generate_character_task(self, user_data, style, role):
         if not isinstance(result, dict):
             raise ValueError("Invalid pipeline result format")
 
-        # Optional sanity checks
         if "base_image" not in result:
             raise ValueError("Missing base_image in result")
 
         # --------------------------------------------------
-        # COMPLETE
+        # SUCCESS
         # --------------------------------------------------
         return result
 
     except Exception as e:
         # --------------------------------------------------
-        # FAILURE STATE (IMPORTANT)
+        # LOG FULL TRACE (VERY IMPORTANT)
         # --------------------------------------------------
-        self.update_state(
-            state="FAILURE",
-            meta={"error": str(e)}
-        )
+        error_trace = traceback.format_exc()
+        print("Character Task Error:\n", error_trace)
 
-        return {
+        # --------------------------------------------------
+        # LET CELERY HANDLE FAILURE
+        # --------------------------------------------------
+        raise Exception({
             "error": str(e),
-            "type": e.__class__.__name__
-        }
+            "type": e.__class__.__name__,
+            "trace": error_trace
+        })
+    
 
 @shared_task(bind=True)
 def generate_pose_task(self, character_id, pose, variation_index):

@@ -317,3 +317,35 @@ def generate_welcome_message(data: dict) -> str:
     )
 
     return response.choices[0].message.content.strip()
+
+def generate_character_description(data: dict) -> str:
+    """
+    Generate a short character description
+    """
+
+    system_prompt = """
+    You are creating a character profile description.
+
+    Rules:
+    - 2–4 sentences max
+    - Describe personality, vibe, and lifestyle
+    - Make it engaging and natural
+    - No explicit sexual content
+    """
+
+    user_prompt = f"""
+    Personality: {data.get("personality", "")}
+    Occupation: {data.get("occupation", "")}
+    Relationship style: {data.get("relationship", "")}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0.85,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+    )
+
+    return response.choices[0].message.content.strip()
