@@ -279,3 +279,41 @@ def build_video_prompt(motion_instruction: str) -> str:
         High detail, cinematic lighting, smooth animation.
     """
 
+def generate_welcome_message(data: dict) -> str:
+    """
+    Generate a first message from the character
+    """
+
+    personality = data.get("personality", "")
+    relationship = data.get("relationship", "")
+    name = data.get("name", "Hey")
+
+    system_prompt = """
+    You are roleplaying as a fictional character.
+
+    Write a short first message introducing yourself.
+
+    Rules:
+    - Stay in character
+    - Reflect personality strongly
+    - Match relationship tone (romantic, friendly, dominant, etc.)
+    - Keep it natural and engaging
+    - 1–3 sentences max
+    - DO NOT be explicit or pornographic
+    """
+
+    user_prompt = f"""
+    Personality: {personality}
+    Relationship: {relationship}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0.9,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+    )
+
+    return response.choices[0].message.content.strip()

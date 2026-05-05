@@ -3,7 +3,8 @@ import inspect
 
 from services.prompt_builder import (
     build_base_prompt,
-    generate_pipeline_prompts
+    generate_pipeline_prompts,
+    generate_welcome_message
 )
 
 from models.model_registry import get_model
@@ -59,12 +60,6 @@ async def generate_character_pipeline(
     video_prompt_1 = prompts.get("video_prompt_1")
     video_prompt_2 = prompts.get("video_prompt_2")
 
-    print(base_image_prompt)
-    print(edit_prompt_1)
-    print(edit_prompt_2)
-    print(video_prompt_1)
-    print(video_prompt_2)
-
     # -----------------------------------------------------
     # SELECT MODEL
     # -----------------------------------------------------
@@ -87,12 +82,23 @@ async def generate_character_pipeline(
     video_handler = get_model("image_to_video", video_model)
 
     # -----------------------------------------------------
-    # BASE IMAGE
+    # PARALLEL TASKS (IMAGE + MESSAGE)
     # -----------------------------------------------------
 
-    base_image = await run_handler(
+    base_image_task = run_handler(
         image_handler,
         base_image_prompt
+    )
+
+    welcome_message_task = asyncio.to_thread(
+        generate_welcome_message,
+        user_data
+    )
+
+    # Run both together
+    base_image, welcome_message = await asyncio.gather(
+        base_image_task,
+        welcome_message_task
     )
 
     # -----------------------------------------------------
@@ -109,7 +115,8 @@ async def generate_character_pipeline(
 
         return {
             "base_image": str(base_image),
-            "edited_images": [str(edited_image)]
+            "edited_images": [str(edited_image)],
+            "welcome_message": welcome_message
         }
 
     # -----------------------------------------------------
@@ -133,12 +140,12 @@ async def generate_character_pipeline(
     videos = await asyncio.gather(*video_tasks)
 
     # -----------------------------------------------------
-    # RETURN 
+    # RETURN
     # -----------------------------------------------------
 
     return {
         "base_image": str(base_image),
         "edited_images": [str(img) for img in edited_images],
-        "videos": [str(v) for v in videos]
+        "videos": [str(v) for v in videos],
+        "welcome_message": welcome_message
     }
-

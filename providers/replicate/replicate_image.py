@@ -46,3 +46,4 @@ async def anime_generation(prompt: str):
         return output.url
 
     return output
+

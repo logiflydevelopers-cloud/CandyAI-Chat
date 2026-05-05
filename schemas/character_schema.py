@@ -24,3 +24,5 @@ class CharacterRequest(BaseModel):
     kinks: Optional[str] = None
     role: Optional[str] = None
     adult_content: str
+
+    

@@ -27,7 +27,8 @@ async def generate_character(request: CharacterRequest):
 
     return {
         "status": "processing",
-        "task_id": task.id
+        "task_id": task.id,
+        "message": "Character generation started"
     }
 
 @router.post("/generate-pose")
@@ -82,20 +83,43 @@ async def generate_image(request: GenerateImageRequest):
 async def get_task_status(task_id: str):
     task = celery_app.AsyncResult(task_id)
 
+    response = {
+        "task_id": task_id,
+        "status": task.state.lower()
+    }
+
     if task.state == "PENDING":
-        return {"status": "pending"}
+        response.update({
+            "status": "pending",
+            "message": "Task is waiting to be processed"
+        })
+
+    elif task.state == "STARTED":
+        response.update({
+            "status": "processing",
+            "message": "Task is currently running"
+        })
 
     elif task.state == "SUCCESS":
-        return {
-            "status": "completed",
-            "data": task.result
-        }
+        result = task.result or {}
+
+        if "error" in result:
+            response.update({
+                "status": "failed",
+                "error": result["error"]
+            })
+            return response
 
     elif task.state == "FAILURE":
-        return {
+        response.update({
             "status": "failed",
             "error": str(task.result)
-        }
+        })
 
     else:
-        return {"status": task.state}
+        response.update({
+            "status": task.state.lower(),
+            "message": "Unknown task state"
+        })
+
+    return response
