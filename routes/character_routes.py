@@ -2,9 +2,11 @@ from fastapi import APIRouter, HTTPException
 from schemas.character_schema import CharacterRequest
 from schemas.pose_schema import PoseRequest
 from schemas.video_schema import VideoRequest
+from schemas.generate_image_schema import GenerateImageRequest
 from tasks.video_tasks import generate_video_task
 from tasks.character_tasks import generate_character_task
 from tasks.character_tasks import generate_pose_task
+from tasks.image_tasks import generate_image_task
 from core.celery_app import celery_app
 
 router = APIRouter(
@@ -57,6 +59,24 @@ async def generate_video(request: VideoRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))   
+
+@router.post("/generate-image")
+async def generate_image(request: GenerateImageRequest):
+    try:
+        task = generate_image_task.delay(
+            request.character_id,
+            request.user_id,
+            request.prompt
+        )
+
+        return {
+            "status": "processing",
+            "task_id": task.id
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/status/{task_id}")
 async def get_task_status(task_id: str):
