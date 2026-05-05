@@ -331,6 +331,7 @@ def generate_character_description(data: dict) -> str:
     - Describe personality, vibe, and lifestyle
     - Make it engaging and natural
     - No explicit sexual content
+    - No names of any character
     """
 
     user_prompt = f"""
