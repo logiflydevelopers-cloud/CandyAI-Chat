@@ -327,7 +327,7 @@ def generate_character_description(data: dict) -> str:
     You are creating a character profile description.
 
     Rules:
-    - 250-300 Characters max no more than that.
+    - 100-150 Characters max no more than that.
     - Describe personality, vibe, and lifestyle
     - Make it engaging and natural
     - No explicit sexual content
