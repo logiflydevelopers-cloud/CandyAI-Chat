@@ -83,43 +83,20 @@ async def generate_image(request: GenerateImageRequest):
 async def get_task_status(task_id: str):
     task = celery_app.AsyncResult(task_id)
 
-    response = {
-        "task_id": task_id,
-        "status": task.state.lower()
-    }
-
     if task.state == "PENDING":
-        response.update({
-            "status": "pending",
-            "message": "Task is waiting to be processed"
-        })
-
-    elif task.state == "STARTED":
-        response.update({
-            "status": "processing",
-            "message": "Task is currently running"
-        })
+        return {"status": "pending"}
 
     elif task.state == "SUCCESS":
-        result = task.result or {}
-
-        if "error" in result:
-            response.update({
-                "status": "failed",
-                "error": result["error"]
-            })
-            return response
+        return {
+            "status": "completed",
+            "data": task.result
+        }
 
     elif task.state == "FAILURE":
-        response.update({
+        return {
             "status": "failed",
             "error": str(task.result)
-        })
+        }
 
     else:
-        response.update({
-            "status": task.state.lower(),
-            "message": "Unknown task state"
-        })
-
-    return response
+        return {"status": task.state}
