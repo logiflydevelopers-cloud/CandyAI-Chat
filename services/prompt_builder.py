@@ -332,12 +332,14 @@ def generate_character_description(data: dict) -> str:
     - Make it engaging and natural
     - No explicit sexual content
     - No names of any character
+    - Do not use they use he/she as per gender.
     """
 
     user_prompt = f"""
     Personality: {data.get("personality", "")}
     Occupation: {data.get("occupation", "")}
     Relationship style: {data.get("relationship", "")}
+    Gender: {data.get("gender", "")}
     """
 
     response = client.chat.completions.create(
