@@ -7,10 +7,12 @@ from services.llm_service import chat
 from services.posthog_client import capture_event
 
 characters_collection = db["characters"]
+usercharacters_collection = db["usercharacters"]   # NEW
 sessions_collection = db["chat_sessions"]
 conversations_collection = db["conversations"]
 messages_collection = db["messages"]
 tokens_collection = db["chat_tokens"]
+
 
 def process_chat(user_id, character_id, user_message, message_doc_id):
     """
@@ -18,7 +20,7 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
     """
 
     character_object_id = ObjectId(character_id)
-    message_doc_object_id = ObjectId(message_doc_id)  
+    message_doc_object_id = ObjectId(message_doc_id)
 
     # =========================
     # Find or Create Session
@@ -36,8 +38,10 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
             "createdAt": datetime.utcnow(),
             "lastMessageAt": datetime.utcnow()
         }
+
         result = sessions_collection.insert_one(session_data)
         session_id = result.inserted_id
+
     else:
         session_id = session["_id"]
 
@@ -52,7 +56,7 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
     conversation_id = conversation["_id"] if conversation else None
 
     # =========================
-    # Fetch Last Messages (UNCHANGED)
+    # Fetch Last Messages
     # =========================
 
     history = []
@@ -78,10 +82,18 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
     # Fetch Character
     # =========================
 
+    # First try main characters collection
     character = characters_collection.find_one({
         "_id": character_object_id
     })
 
+    # If not found, try user characters collection
+    if not character:
+        character = usercharacters_collection.find_one({
+            "_id": character_object_id
+        })
+
+    # Still not found
     if not character:
         raise ValueError(f"Character not found: {character_id}")
 
@@ -127,11 +139,11 @@ def process_chat(user_id, character_id, user_message, message_doc_id):
         raise
 
     # =========================
-    # Store Token Usage (FIXED)
+    # Store Token Usage
     # =========================
 
     tokens_collection.update_one(
-        {"messageId": message_doc_object_id}, 
+        {"messageId": message_doc_object_id},
         {
             "$inc": {
                 "promptTokens": usage["prompt_tokens"],
