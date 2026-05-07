@@ -24,5 +24,10 @@ POSES = {
         "Show me you squatting while leaning slightly forward, wide leg, strong eye contact, assertive posture",
         "Show me you squatting with both arms lifted above, eyes gently closed, serene and sensual mood, soft lighting",
         "Show me you squatting casually with one hand raised in the air, relaxed wrist, urban streetwear vibe, confident attitude",
+    ],
+    "ass": [
+        "Show me your bare ass",
+        "Show me you squatting with both arms lifted above, eyes gently closed, serene and sensual mood, soft lighting",
+        "Show me you squatting casually with one hand raised in the air, relaxed wrist, urban streetwear vibe, confident attitude",
     ]
 }
