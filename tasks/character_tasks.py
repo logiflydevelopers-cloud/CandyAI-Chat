@@ -58,17 +58,15 @@ def generate_character_task(self, user_data, style, role):
     
 
 @shared_task(bind=True)
-def generate_pose_task(self, character_id, pose, variation_index):
+def generate_pose_task(self, character_id, pose, prompt):
     try:
         result = generate_pose_image(
             character_id=character_id,
             pose=pose,
-            variation_index=variation_index
+            prompt=prompt
         )
 
-        return {
-            "image_url": result
-        }
+        return result
 
     except Exception as e:
         return {

@@ -23,8 +23,7 @@ def get_character_by_id(character_id):
         print("GET CHARACTER ERROR:", e)
         return None
 
-def generate_pose_image(character_id, pose, variation_index):
-    from services.pose_service import PoseService
+def generate_pose_image(character_id, pose, prompt):
     from services.prompt_builder import build_pose_prompt
     from providers.fal.fal_edit import edit_character
     from services.character_service import get_character_by_id
@@ -48,13 +47,8 @@ def generate_pose_image(character_id, pose, variation_index):
 
     base_image = images[0]
 
-    # Build pose instruction
-    pose_instruction = PoseService.get_pose_prompt(
-        pose,
-        variation_index
-    )
-
-    final_prompt = build_pose_prompt(pose_instruction)
+    # Build final prompt
+    final_prompt = build_pose_prompt(prompt)
 
     # Generate image
     result = edit_character(
@@ -68,7 +62,11 @@ def generate_pose_image(character_id, pose, variation_index):
             "error": "Image generation failed"
         }
 
-    return result
+    return {
+        "image_url": result.get("image_url"),
+        "pose": pose,
+        "prompt": prompt
+    }
 
 
 def generate_image_from_prompt(character_id, user_id, prompt):
