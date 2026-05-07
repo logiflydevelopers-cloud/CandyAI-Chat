@@ -25,3 +25,4 @@ celery_app.autodiscover_tasks(["tasks"])
 
 import tasks.character_tasks
 import tasks.video_tasks
+import tasks.image_tasks
