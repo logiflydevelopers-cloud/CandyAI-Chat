@@ -6,10 +6,12 @@ def get_all_characters():
 def get_character_by_id(uniqueId):
     return characters_collection.find_one({"uniqueId": uniqueId})
 
-def generate_pose_image(character, pose, variation_index):
+def generate_pose_image(character_id, pose, variation_index):
     from services.pose_service import PoseService
     from services.prompt_builder import build_pose_prompt
     from providers.fal.fal_edit import edit_character
+
+    character = get_character_by_id(character_id)
 
     base_image = character.get("images", [None])[0]
 
