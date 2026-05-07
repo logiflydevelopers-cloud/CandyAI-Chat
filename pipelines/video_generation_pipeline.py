@@ -50,7 +50,5 @@ def generate_video_pipeline(
         raise Exception("Video generation failed")
 
     return {
-        "pose_used": pose,
-        "edited_image": edited_image_url,
         "video": video_url
     }
