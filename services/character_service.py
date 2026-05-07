@@ -1,8 +1,10 @@
 from database.mongo import characters_collection
 from bson import ObjectId
 
+
 def get_all_characters():
     return list(characters_collection.find())
+
 
 def get_character_by_id(character_id):
     try:
@@ -23,15 +25,14 @@ def get_character_by_id(character_id):
         print("GET CHARACTER ERROR:", e)
         return None
 
+
 def generate_pose_image(character_id, pose, prompt):
     from services.prompt_builder import build_pose_prompt
     from providers.fal.fal_edit import edit_character
-    from services.character_service import get_character_by_id
 
     # Fetch character
     character = get_character_by_id(character_id)
 
-    # Validate character
     if character is None:
         return {
             "error": f"Character not found for ID: {character_id}"
@@ -63,7 +64,7 @@ def generate_pose_image(character_id, pose, prompt):
         }
 
     return {
-        "image_url": result.get("image_url"),
+        "image_url": result,
         "pose": pose,
         "prompt": prompt
     }
@@ -86,25 +87,18 @@ def generate_image_from_prompt(character_id, user_id, prompt):
 
     base_image = images[0]
 
-    # Use user prompt directly
-    final_prompt = prompt
-
     # Generate image
     result = edit_character(
         image_url=base_image,
-        prompt=final_prompt
+        prompt=prompt
     )
 
-    generated_image_url = result.get("image_url")
-
-    if not generated_image_url:
+    if not result:
         return {"error": "Image generation failed"}
 
-    # Return response
     return {
-        "image_url": generated_image_url,
+        "image_url": result,
         "character_id": character_id,
         "user_id": user_id,
         "prompt": prompt
     }
-
