@@ -38,7 +38,7 @@ POSES = {
     "blowjob": [
         "Show me you performing oral sex",
         "Show me a blowjob",
-        "Show me a man standing, side view, blow job"
+        "Show me a you giving blowjob to a man, side view"
     ],
     "cumshot": [
         "Show me a blowjob cumshot",
@@ -82,7 +82,7 @@ POSES = {
         "Show me you putting a dildo in your pussy, look of pleasure on your face"
     ],
     "bondage": [
-        "Show me you tied up in bondage ropes, naked",
+        "Show me youe naked body tied up in bondage ropes",
         "Show me you tied up from the front with your pussy exposed",
         "Show me you tied up, bondage ropes, naked, legs up"
     ],

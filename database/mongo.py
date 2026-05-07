@@ -12,3 +12,4 @@ client = MongoClient(mongo_uri)
 db = client[db_name]
 
 characters_collection = db["characters"]
+usercharacters_collection = db["usercharacters"]

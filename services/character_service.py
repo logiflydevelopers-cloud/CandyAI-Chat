@@ -1,5 +1,10 @@
-from database.mongo import characters_collection
+from database.mongo import (
+    characters_collection,
+    usercharacters_collection
+)
+
 from bson import ObjectId
+from bson.errors import InvalidId
 
 
 def get_all_characters():
@@ -8,14 +13,35 @@ def get_all_characters():
 
 def get_character_by_id(character_id):
     try:
-        # Try searching by MongoDB _id
-        character = characters_collection.find_one({
-            "_id": ObjectId(character_id)
-        })
+        character = None
 
-        # Fallback: search by uniqueId
+        # -----------------------------------
+        # Try MongoDB ObjectId search
+        # -----------------------------------
+        try:
+            character = characters_collection.find_one({
+                "_id": ObjectId(character_id)
+            })
+
+            # Search usercharacters_collection
+            if not character:
+                character = usercharacters_collection.find_one({
+                    "_id": ObjectId(character_id)
+                })
+
+        except InvalidId:
+            pass
+
+        # -----------------------------------
+        # Fallback: uniqueId search
+        # -----------------------------------
         if not character:
             character = characters_collection.find_one({
+                "uniqueId": character_id
+            })
+
+        if not character:
+            character = usercharacters_collection.find_one({
                 "uniqueId": character_id
             })
 
