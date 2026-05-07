@@ -5,26 +5,53 @@ def get_all_characters():
 
 def get_character_by_id(uniqueId):
     return characters_collection.find_one({"uniqueId": uniqueId})
-
 def generate_pose_image(character_id, pose, variation_index):
     from services.pose_service import PoseService
     from services.prompt_builder import build_pose_prompt
     from providers.fal.fal_edit import edit_character
+    from services.character_service import get_character_by_id
 
+    # Fetch character
     character = get_character_by_id(character_id)
 
-    base_image = character.get("images", [None])[0]
+    # Validate character
+    if character is None:
+        return {
+            "error": f"Character not found for ID: {character_id}"
+        }
 
-    if not base_image:
-        raise ValueError("No base image found for character")
+    # Get images safely
+    images = character.get("images", [])
 
-    pose_instruction = PoseService.get_pose_prompt(pose, variation_index)
+    if not images:
+        return {
+            "error": "No base image found for character"
+        }
+
+    base_image = images[0]
+
+    # Build pose instruction
+    pose_instruction = PoseService.get_pose_prompt(
+        pose,
+        variation_index
+    )
+
     final_prompt = build_pose_prompt(pose_instruction)
 
-    return edit_character(
+    # Generate image
+    result = edit_character(
         image_url=base_image,
         prompt=final_prompt
     )
+
+    # Validate result
+    if not result:
+        return {
+            "error": "Image generation failed"
+        }
+
+    return result
+
 
 def generate_image_from_prompt(character_id, user_id, prompt):
     from providers.fal.fal_edit import edit_character
