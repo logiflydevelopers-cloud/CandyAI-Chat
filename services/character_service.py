@@ -65,8 +65,6 @@ def generate_pose_image(character_id, pose, prompt):
 
     return {
         "image_url": result,
-        "pose": pose,
-        "prompt": prompt
     }
 
 
@@ -98,7 +96,5 @@ def generate_image_from_prompt(character_id, user_id, prompt):
 
     return {
         "image_url": result,
-        "character_id": character_id,
         "user_id": user_id,
-        "prompt": prompt
     }
