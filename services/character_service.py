@@ -1,10 +1,28 @@
 from database.mongo import characters_collection
+from bson import ObjectId
 
 def get_all_characters():
     return list(characters_collection.find())
 
-def get_character_by_id(uniqueId):
-    return characters_collection.find_one({"uniqueId": uniqueId})
+def get_character_by_id(character_id):
+    try:
+        # Try searching by MongoDB _id
+        character = characters_collection.find_one({
+            "_id": ObjectId(character_id)
+        })
+
+        # Fallback: search by uniqueId
+        if not character:
+            character = characters_collection.find_one({
+                "uniqueId": character_id
+            })
+
+        return character
+
+    except Exception as e:
+        print("GET CHARACTER ERROR:", e)
+        return None
+
 def generate_pose_image(character_id, pose, variation_index):
     from services.pose_service import PoseService
     from services.prompt_builder import build_pose_prompt
