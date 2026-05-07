@@ -60,12 +60,17 @@ def generate_character_task(self, user_data, style, role):
 @shared_task(bind=True)
 def generate_pose_task(self, character_id, pose, variation_index):
     try:
-        result = asyncio.run(
-            generate_pose_image(
+        result = generate_pose_image(
             character_id=character_id,
             pose=pose,
             variation_index=variation_index
-        ))
-        return result
+        )
+
+        return {
+            "image_url": result
+        }
+
     except Exception as e:
-        return {"error": str(e)}
+        return {
+            "error": str(e)
+        }
