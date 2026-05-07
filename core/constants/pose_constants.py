@@ -26,7 +26,7 @@ POSES = {
         "Show me you squatting casually with one hand raised in the air, relaxed wrist, urban streetwear vibe, confident attitude",
     ],
     "ass": [
-        "Show me you grabbing your fully naked ass from behind. Hands on the ass and slighthy streching the ass with your hands.",
+        "Show me your naked breasts, with your hands above your head",
         "Show me you squatting with both arms lifted above, eyes gently closed, serene and sensual mood, soft lighting",
         "Show me you squatting casually with one hand raised in the air, relaxed wrist, urban streetwear vibe, confident attitude",
     ]
