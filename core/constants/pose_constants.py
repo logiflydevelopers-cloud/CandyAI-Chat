@@ -38,7 +38,7 @@ POSES = {
     "blowjob": [
         "Show me you performing oral sex",
         "Show me a blowjob",
-        "Show me a you giving blowjob to a man, side view"
+        "Show me you giving blowjob to a man, side view"
     ],
     "cumshot": [
         "Show me a blowjob cumshot",
