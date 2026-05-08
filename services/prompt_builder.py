@@ -257,10 +257,19 @@ def generate_pipeline_prompts(base_prompt: str, role: str = "user") -> dict:
 
     return prompts
 
-def build_pose_prompt(base_instruction: str) -> str:
-    return f"""
+def build_pose_prompt(
+        prompt: str,
+        pose: str
+    ) -> str:
+
+        return f"""
         Keep the same character, same face, same hairstyle, same skin tone.
-        {base_instruction}
+
+        Character pose:
+        {pose}
+
+        Additional instructions:
+        {prompt}
         Do not change identity. Maintain consistency.
         Can Change outfits, Outfit's Color and background as fit per the pose.
         But keep the outfit revealing and sensual
