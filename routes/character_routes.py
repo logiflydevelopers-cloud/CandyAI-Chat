@@ -36,7 +36,8 @@ async def generate_pose(request: PoseRequest):
     task = generate_pose_task.delay(
         request.character_id,
         request.pose,
-        request.prompt
+        request.prompt,
+        request.style
     )
 
     return {

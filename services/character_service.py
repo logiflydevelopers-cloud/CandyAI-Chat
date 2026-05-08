@@ -52,11 +52,26 @@ def get_character_by_id(character_id):
         return None
 
 
-def generate_pose_image(character_id, pose, prompt):
+def generate_pose_image(
+    character_id,
+    pose,
+    prompt,
+    style="realistic"
+):
     from services.prompt_builder import build_pose_prompt
-    from providers.fal.fal_edit import edit_character
+    from registry.model_registry import get_model
 
-    # Fetch character
+    # =========================================
+    # STYLE → MODEL MAP
+    # =========================================
+    STYLE_MODEL_MAP = {
+        "realistic": "character_edit",
+        "anime": "anime_edit"
+    }
+
+    # =========================================
+    # FETCH CHARACTER
+    # =========================================
     character = get_character_by_id(character_id)
 
     if character is None:
@@ -64,7 +79,9 @@ def generate_pose_image(character_id, pose, prompt):
             "error": f"Character not found for ID: {character_id}"
         }
 
-    # Get images safely
+    # =========================================
+    # GET BASE IMAGE
+    # =========================================
     images = character.get("images", [])
 
     if not images:
@@ -74,25 +91,68 @@ def generate_pose_image(character_id, pose, prompt):
 
     base_image = images[0]
 
-    # Build final prompt
-    final_prompt = build_pose_prompt(prompt)
-
-    # Generate image
-    result = edit_character(
-        image_url=base_image,
-        prompt=final_prompt
+    # =========================================
+    # BUILD FINAL PROMPT
+    # =========================================
+    final_prompt = build_pose_prompt(
+        prompt=prompt,
+        pose=pose
     )
 
-    # Validate result
+    # =========================================
+    # GET MODEL NAME
+    # =========================================
+    model_name = STYLE_MODEL_MAP.get(style)
+
+    if not model_name:
+        return {
+            "error": f"Invalid style: {style}"
+        }
+
+    # =========================================
+    # GET MODEL HANDLER
+    # =========================================
+    try:
+        model_handler = get_model(
+            feature="image_edit",
+            model=model_name
+        )
+
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
+
+    # =========================================
+    # GENERATE IMAGE
+    # =========================================
+    try:
+        result = model_handler(
+            image_url=base_image,
+            prompt=final_prompt
+        )
+
+    except Exception as e:
+        return {
+            "error": f"Generation failed: {str(e)}"
+        }
+
+    # =========================================
+    # VALIDATE RESULT
+    # =========================================
     if not result:
         return {
             "error": "Image generation failed"
         }
 
+    # =========================================
+    # SUCCESS RESPONSE
+    # =========================================
     return {
         "image_url": result,
+        "style": style,
+        "pose": pose
     }
-
 
 def generate_image_from_prompt(character_id, user_id, prompt):
     from providers.fal.fal_edit import edit_character
