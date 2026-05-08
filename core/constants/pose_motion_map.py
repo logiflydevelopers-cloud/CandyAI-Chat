@@ -14,5 +14,9 @@ POSE_MOTION_MAP = {
     "turning": {
         "pose": "posing",
         "pose_index": 0
+    },
+    "blowjob": {
+        "pose": "blowjob",
+        "pose_index": 2
     }
 }
