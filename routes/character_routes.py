@@ -70,10 +70,13 @@ async def generate_video(request: VideoRequest):
 @router.post("/generate-image")
 async def generate_image(request: GenerateImageRequest):
     try:
+
         task = generate_image_task.delay(
             request.character_id,
             request.user_id,
-            request.prompt
+            request.prompt,
+            request.style,
+            request.num_images
         )
 
         return {
@@ -82,7 +85,10 @@ async def generate_image(request: GenerateImageRequest):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 
 @router.get("/status/{task_id}")

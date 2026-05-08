@@ -5,4 +5,5 @@ class VideoRequest(BaseModel):
     motion: str
     motion_index: int
     style: str
+    
 

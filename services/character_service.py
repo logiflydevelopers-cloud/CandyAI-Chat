@@ -154,33 +154,115 @@ def generate_pose_image(
         "pose": pose
     }
 
-def generate_image_from_prompt(character_id, user_id, prompt):
-    from providers.fal.fal_edit import edit_character
+def generate_image_from_prompt(
+    character_id,
+    user_id,
+    prompt,
+    style="realistic",
+    num_images=1
+):
+    from models.model_registry import get_model
 
-    # Fetch character
+    # =========================================
+    # STYLE → MODEL MAP
+    # =========================================
+    STYLE_MODEL_MAP = {
+        "realistic": "character_edit",
+        "anime": "anime_edit"
+    }
+
+    # =========================================
+    # VALIDATE IMAGE COUNT
+    # =========================================
+    MAX_IMAGES = 10
+
+    if num_images < 1:
+        num_images = 1
+
+    if num_images > MAX_IMAGES:
+        num_images = MAX_IMAGES
+
+    # =========================================
+    # FETCH CHARACTER
+    # =========================================
     character = get_character_by_id(character_id)
 
     if not character:
-        return {"error": "Character not found"}
+        return {
+            "error": "Character not found"
+        }
 
-    # Extract base image
+    # =========================================
+    # GET BASE IMAGE
+    # =========================================
     images = character.get("images", [])
 
     if not images:
-        return {"error": "No base image found"}
+        return {
+            "error": "No base image found"
+        }
 
     base_image = images[0]
 
-    # Generate image
-    result = edit_character(
-        image_url=base_image,
-        prompt=prompt
-    )
+    # =========================================
+    # GET MODEL NAME
+    # =========================================
+    model_name = STYLE_MODEL_MAP.get(style)
 
-    if not result:
-        return {"error": "Image generation failed"}
+    if not model_name:
+        return {
+            "error": f"Invalid style: {style}"
+        }
 
+    # =========================================
+    # GET MODEL HANDLER
+    # =========================================
+    try:
+
+        model_handler = get_model(
+            feature="image_edit",
+            model=model_name
+        )
+
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
+
+    # =========================================
+    # GENERATE IMAGES
+    # =========================================
+    generated_images = []
+
+    for i in range(num_images):
+
+        try:
+
+            result = model_handler(
+                image_url=base_image,
+                prompt=prompt
+            )
+
+            if result:
+                generated_images.append(result)
+
+        except Exception as e:
+            print(f"Generation failed for image {i+1}: {str(e)}")
+
+    # =========================================
+    # VALIDATE RESULTS
+    # =========================================
+    if not generated_images:
+        return {
+            "error": "All image generations failed"
+        }
+
+    # =========================================
+    # SUCCESS RESPONSE
+    # =========================================
     return {
-        "image_url": result,
-        "user_id": user_id,
+        "images": generated_images,
+        "total_generated": len(generated_images),
+        "style": style,
+        "user_id": user_id
     }
