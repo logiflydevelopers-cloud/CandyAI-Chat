@@ -58,12 +58,20 @@ def generate_character_task(self, user_data, style, role):
     
 
 @shared_task(bind=True)
-def generate_pose_task(self, character_id, pose, prompt):
+def generate_pose_task(
+    self,
+    character_id,
+    pose,
+    prompt,
+    style
+):
     try:
+
         result = generate_pose_image(
             character_id=character_id,
             pose=pose,
-            prompt=prompt
+            prompt=prompt,
+            style=style
         )
 
         return result
