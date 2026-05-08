@@ -59,7 +59,7 @@ def generate_pose_image(
     style="realistic"
 ):
     from services.prompt_builder import build_pose_prompt
-    from registry.model_registry import get_model
+    from models.model_registry import get_model
 
     # =========================================
     # STYLE → MODEL MAP
