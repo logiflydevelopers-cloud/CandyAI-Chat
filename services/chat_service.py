@@ -7,7 +7,7 @@ from services.llm_service import chat
 from services.posthog_client import capture_event
 
 characters_collection = db["characters"]
-usercharacters_collection = db["usercharacters"]   # NEW
+usercharacters_collection = db["usercharacters"]
 sessions_collection = db["chat_sessions"]
 conversations_collection = db["conversations"]
 messages_collection = db["messages"]
