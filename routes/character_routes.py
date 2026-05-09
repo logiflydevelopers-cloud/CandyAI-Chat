@@ -33,41 +33,41 @@ async def generate_character(request: CharacterRequest):
 
 @router.post("/generate-pose")
 async def generate_pose(request: PoseRequest):
-    # task = generate_pose_task.delay(
-    #     request.character_id,
-    #     request.pose,
-    #     request.prompt,
-    #     request.style
-    # )
+    task = generate_pose_task.delay(
+        request.character_id,
+        request.pose,
+        request.prompt,
+        request.style
+    )
 
-    # return {
-    #     "status": "processing",
-    #     "task_id": task.id
-    # }
-    pass
+    return {
+        "status": "processing",
+        "task_id": task.id
+    }
+    
 
 @router.post("/generate-video")
 async def generate_video(request: VideoRequest):
-    # try:
+    try:
 
-    #     task = generate_video_task.delay(
-    #         request.character_id,
-    #         request.motion,
-    #         request.motion_index,
-    #         request.style
-    #     )
+        task = generate_video_task.delay(
+            request.character_id,
+            request.motion,
+            request.motion_index,
+            request.style
+        )
 
-    #     return {
-    #         "status": "processing",
-    #         "task_id": task.id
-    #     }
+        return {
+            "status": "processing",
+            "task_id": task.id
+        }
 
-    # except Exception as e:
-    #     raise HTTPException(
-    #         status_code=500,
-    #         detail=str(e)
-    #     ) 
-    pass
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        ) 
+    
 
 @router.post("/generate-image")
 async def generate_image(request: GenerateImageRequest):
